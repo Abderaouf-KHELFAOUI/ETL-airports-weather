@@ -1,15 +1,17 @@
 
 CREATE TABLE AIRLINES (
-    airline_code VARCHAR(10) PRIMARY KEY,
+    airline_code CHAR(2) PRIMARY KEY,
     airline_name VARCHAR(100)
 );
 
 CREATE TABLE AIRPORTS (
-    iata_code VARCHAR(3) PRIMARY KEY,
+    iata_code CHAR(3) PRIMARY KEY,
     city VARCHAR(50),
-    state VARCHAR(50),
+    state CHAR(2),
     latitude FLOAT,
-    longitude FLOAT
+    longitude FLOAT,
+    
+    CHECK(latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180)
 );
 
 CREATE TABLE FLIGHTS (
@@ -19,12 +21,15 @@ CREATE TABLE FLIGHTS (
     dep_time TIMESTAMP,
     dep_delay INTEGER,
     cancelled BOOLEAN,
-    airline_code VARCHAR(10),
-    origin_airport VARCHAR(3),
-    dest_airport VARCHAR(3),
-    FOREIGN KEY (airline_code) REFERENCES AIRLINES(airline_code),
-    FOREIGN KEY (origin_airport) REFERENCES AIRPORTS(iata_code),
-    FOREIGN KEY (dest_airport) REFERENCES AIRPORTS(iata_code)
+    airline_code CHAR(2),
+    origin_airport CHAR(3),
+    dest_airport CHAR(3),
+    FOREIGN KEY (airline_code) 
+        REFERENCES AIRLINES(airline_code),
+    FOREIGN KEY (origin_airport) 
+        REFERENCES AIRPORTS(iata_code),
+    FOREIGN KEY (dest_airport) 
+        REFERENCES AIRPORTS(iata_code)
 );
 
 CREATE TABLE WEATHER (
@@ -32,6 +37,6 @@ CREATE TABLE WEATHER (
     reading_time TIMESTAMP,
     wind_speed FLOAT,
     temperature FLOAT,
-    airport_code VARCHAR(3),
+    airport_code CHAR(3),
     FOREIGN KEY (airport_code) REFERENCES AIRPORTS(iata_code)
 );

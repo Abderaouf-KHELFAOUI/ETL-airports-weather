@@ -139,6 +139,19 @@ def process_weather_data():
         # easier to read and analyze later
         df_weather['temperature'] = df_weather['temperature'] - 273.15 
 
+        # removing duplicates just in case (same city same time)
+        df_weather = df_weather.drop_duplicates(subset=['datetime', 'City'])
+
+        # filtering outliers (sensor errors)
+        # keeping realistic temperatures between -60 and 60 celsius
+        df_weather = df_weather[
+            (df_weather['temperature'] > -60) & 
+            (df_weather['temperature'] < 60)
+        ]
+
+        # wind speed cannot be negative
+        df_weather = df_weather[df_weather['wind_speed'] >= 0]
+
         df_final_weather = pd.DataFrame({
             'reading_time': pd.to_datetime(df_weather['datetime']),
             'wind_speed': df_weather['wind_speed'],

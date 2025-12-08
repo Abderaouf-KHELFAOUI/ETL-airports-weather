@@ -41,7 +41,13 @@ def create_database():
     print("Creating database...")
     
     if os.path.exists(db_name):
-        os.remove(db_name)
+        try:
+            os.remove(db_name)
+        except PermissionError:
+            print(f"⚠️  WARNING: Could not delete '{db_name}'.")
+            print("   It is currently open in another program (like DB Browser) or a stuck Python process.")
+            print("   Please close the file/program and try again.")
+            sys.exit(1) # Stop here so you can fix it
     
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
@@ -75,12 +81,17 @@ def populate_flights_and_others():
     print("Loading airports...")
     try:
         df_airports = pd.read_csv("airports.csv")
-        df_airports = df_airports[['IATA_CODE', 'CITY', 'STATE', 'LATITUDE', 'LONGITUDE']]
-        df_airports.columns = ['iata_code', 'city', 'state', 'latitude', 'longitude']
+        
+        # FIX: Added 'AIRPORT' to the list below
+        df_airports = df_airports[['IATA_CODE', 'AIRPORT', 'CITY', 'STATE', 'LATITUDE', 'LONGITUDE']]
+        
+        # FIX: Added 'airport_name' to match the database column
+        df_airports.columns = ['iata_code', 'airport_name', 'city', 'state', 'latitude', 'longitude']
+        
         df_airports.to_sql('AIRPORTS', conn, if_exists='append', index=False)
+        print("Airports loaded successfully.")
     except Exception as e:
         print(f"Error loading airports: {e}")
-
     # Load Flights
     print("Loading flights (chunk of 100k)...")
     try:

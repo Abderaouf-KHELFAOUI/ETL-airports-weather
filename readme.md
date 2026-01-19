@@ -1,6 +1,5 @@
 # Flight Delay & Weather Database
 
-**Course:** Databases 1 (2025-2026) – Master 1  
 **Authors:** Abderaouf KHELFAOUI & Ayman EL ALASS 
 
 ## Description
